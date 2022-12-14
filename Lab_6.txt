@@ -1,0 +1,139 @@
+﻿use learn
+
+db.towns.insertMany(
+[
+	{
+		name: "Punxsutawney ", 
+		populatiuon: 6200, 
+		last_sensus: ISODate("2022-01-31"), 
+		famous_for: [""], 
+		mayor: {
+   			name: "Jim Wehrle" 
+		}
+	},
+	{
+		name: "New York", 
+		populatiuon: 22200000, 
+		last_sensus: ISODate("2022-07-31"), 
+		famous_for: ["status of liberty", "food"], 
+		mayor: {
+   			name: "Michael Bloomberg", 
+			party: "I"
+		}
+	},
+	{
+		name: "Portland", 
+		populatiuon: 528000, 
+		last_sensus: ISODate("2022-07-20"), 
+		famous_for: ["beer", "food"], 
+		mayor: {
+   			name: "Sam Adams", 
+			party: "D"
+		}
+	}
+])
+
+db.towns.find({"mayor.party": "I"}, {_id: false, populatiuon: false, last_sensus: false, famous_for: false})
+db.towns.find({"mayor.party": {$exists: false}}, {_id: false, populatiuon: false, last_sensus: false, famous_for: false})
+
+
+var cursor = db.unicorns.find({gender:"m"});null;
+cursor.limit(2).sort({name:1});null;
+cursor.forEach(obj => print(obj))
+
+
+db.unicorns.find({gender: "f", weight: {$gt : 500, $lt: 600}}, {_id: false}).count()
+
+
+db.unicorns.distinct('loves')
+
+
+db.unicorns.aggregate({"$group":{_id:"$gender",count:{$sum:1}}})
+
+
+db.unicorns.insertOne({name: 'Barny', loves: ['grape'], weight: 340, gender: 'm'})
+
+
+db.unicorns.updateOne({name : "Ayna"}, {$set: {weight: 800, vampires : 51}}, {upsert: true})
+
+
+db.unicorns.updateOne({name : "Raleigh"}, {$set: {loves: ["redbull"]}}, {upsert: true})
+
+
+db.unicorns.updateMany({gender: 'm'}, {$inc: {vampires: 5}}, {multi:true})
+
+
+db.towns.updateOne({name: "Portland"}, {$unset: {"mayor.party": 1}}, {upsert: true})
+
+
+db.unicorns.updateOne({name : "Pilot"}, {$push: {loves: "chocolate"}}, {upsert: true})
+
+
+db.unicorns.updateOne({name : "Aurora"}, {$addToSet: {loves: {$each: ["sugar", "limons"]}}}, {upsert: true})
+
+
+db.towns.insertMany(
+[
+	{
+		name: "Punxsutawney ", 
+		popujatiuon: 6200, 
+		last_sensus: ISODate("2022-01-31"), 
+		famous_for: ["phil the groundhog"], 
+		mayor: {
+   			name: "Jim Wehrle" 
+		}
+	},
+	{
+		name: "New York", 
+		popujatiuon: 22200000, 
+		last_sensus: ISODate("2022-07-31"), 
+		famous_for: ["status of liberty", "food"], 
+		mayor: {
+   			name: "Michael Bloomberg", 
+			party: "I"
+		}
+	},
+	{
+		name: "Portland", 
+		popujatiuon: 528000, 
+		last_sensus: ISODate("2022-07-20"), 
+		famous_for: ["beer", "food"], 
+		mayor: {
+   			name: "Sam Adams", 
+			party: "D"
+		}
+	}
+])
+
+db.towns.deleteMany({"mayor.party": -1})
+db.towns.find()
+db.towns.drop()
+show collections
+
+
+
+
+
+
+db.createCollection("areas")  
+db.areas.insertOne({_id:"field", name:"Magic Fileds"})
+db.areas.insertOne({_id:"clouds", name:"Magic Clouds"})
+
+
+
+db.unicorns.updateOne({_id:ObjectId("638371be1afd7086efe5f8cd")},{$set: {area:{$ref:"areas", $id: "clouds"}}})
+db.unicorns.updateOne({_id:ObjectId("638371be1afd7086efe5f8c9")},{$set: {area:{$ref:"areas", $id: "fields"}}})
+db.unicorns.ensureIndex({"name" : 1}, {"unique" : true}) 
+
+
+
+db.unicorns.getIndexes()
+db.unicorns.dropIndex("name_1")
+db.unicorns.dropIndex("_id_")
+
+
+db.createCollection("numbers") 
+for(i = 0; i < 100000; i++){db.numbers.insert({value: i})}
+db.numbers.find().sort({$natural:-1}).limit(4)
+db.numbers.ensureIndex({"value" : 1})
+db.numbers.find().sort({$natural:-1}).limit(4)
